@@ -1,0 +1,3065 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f766e">
+  <title>Productivity Hub - Aplikasi Produktivitas Mobile</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME SETUP
+       Tema: #a3aa5a dengan kartu putih bersih (#ffffff)
+       ========================================================================== */
+    :root {
+      --primary: #a3aa5a;
+      --primary-dark: #828a3f;
+      --primary-darker: #5f6628;
+      --primary-light: #c2c97c;
+      --primary-soft: #f4f6e8;
+      --primary-gradient: linear-gradient(135deg, #a3aa5a 0%, #878f41 100%);
+      --accent-warm: #e67e22;
+      --accent-blue: #3b82f6;
+      --accent-emerald: #10b981;
+      
+      --bg-outside: #f1f5f9;
+      --bg-app: #f8faf5;
+      --card-bg: #ffffff;
+      
+      --text-main: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      
+      --border-subtle: #e8ede0;
+      --border-light: #e2e8f0;
+      
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 6px 16px -2px rgba(163, 170, 90, 0.14), 0 3px 6px -1px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 16px 32px -4px rgba(70, 77, 30, 0.12), 0 6px 12px -2px rgba(0, 0, 0, 0.04);
+      --shadow-app-shell: 0 25px 60px -15px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.8);
+      
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
+      
+      --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      --bottom-bar-height: 72px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    input, textarea, button, select {
+      font-family: inherit;
+      user-select: text;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-outside);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       CONTAINER SMARTPHONE & MOBILE LAYOUT
+       ========================================================================== */
+    .phone-container {
+      width: 100%;
+      max-width: 420px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: var(--bg-app);
+      box-shadow: var(--shadow-app-shell);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    @media (min-width: 421px) {
+      .phone-container {
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 36px;
+        margin: 20px 0;
+        min-height: 840px;
+        max-height: 920px;
+        border: 8px solid #ffffff;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        background-color: var(--bg-app);
+      }
+      .phone-container {
+        max-width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        height: 100dvh;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        margin: 0;
+      }
+    }
+
+    /* ==========================================================================
+       TOP STATUS BAR & APP HEADER
+       ========================================================================== */
+    .app-header {
+      background: var(--card-bg);
+      padding: 16px 20px 14px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(163, 170, 90, 0.4);
+    }
+
+    .brand-info h1 {
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #1e293b;
+      line-height: 1.1;
+    }
+
+    .brand-info .date-badge {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sound-toggle-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      border: 1px solid var(--border-subtle);
+      color: var(--primary-darker);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .sound-toggle-btn:active {
+      transform: scale(0.92);
+      background: #e9edcf;
+    }
+
+    /* ==========================================================================
+       MAIN SCROLLABLE CONTENT AREA
+       ========================================================================== */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px 16px calc(var(--bottom-bar-height) + 24px) 16px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+
+    .content-area::-webkit-scrollbar {
+      width: 4px;
+    }
+    .content-area::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    /* ==========================================================================
+       TAB SCREENS & TRANSITIONS
+       ========================================================================== */
+    .tab-screen {
+      display: none;
+      animation: tabFadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .tab-screen.active {
+      display: block;
+    }
+
+    @keyframes tabFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       CARD STYLES (Pure White #ffffff)
+       ========================================================================== */
+    .card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+      transition: var(--transition-fast);
+    }
+
+    .card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ==========================================================================
+       VIEW SWITCHER BAR (TUGAS vs KALENDER PLANNING)
+       ========================================================================== */
+    .view-switcher-bar {
+      display: flex;
+      background: #eef2e6;
+      border-radius: var(--radius-full);
+      padding: 4px;
+      margin-bottom: 14px;
+      gap: 4px;
+    }
+
+    .view-switch-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition-fast);
+    }
+
+    .view-switch-btn.active {
+      background: #ffffff;
+      color: var(--primary-darker);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ==========================================================================
+       TAB 1: TUGAS (HERO, ADD BOX, LIST)
+       ========================================================================== */
+    .task-hero-card {
+      background: linear-gradient(135deg, #a3aa5a 0%, #7b823b 100%);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 24px -4px rgba(130, 138, 63, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .task-hero-card::after {
+      content: '';
+      position: absolute;
+      right: -25px;
+      bottom: -35px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .hero-top h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .hero-top p {
+      font-size: 0.78rem;
+      opacity: 0.92;
+      margin-top: 2px;
+    }
+
+    .hero-progress-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.22);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(4px);
+    }
+
+    .progress-bar-container {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-full);
+      height: 8px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-fill {
+      background: #ffffff;
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius-full);
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-stats-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      opacity: 0.92;
+      font-weight: 500;
+    }
+
+    /* Add Task Form */
+    .add-task-box {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .add-task-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .task-input {
+      flex: 1;
+      border: 1.5px solid var(--border-light);
+      background: #fafbfc;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      outline: none;
+      transition: var(--transition-fast);
+    }
+
+    .task-input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(163, 170, 90, 0.2);
+    }
+
+    .btn-add-task {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: var(--transition-fast);
+      box-shadow: 0 4px 10px rgba(163, 170, 90, 0.35);
+    }
+
+    .btn-add-task:active {
+      transform: scale(0.92);
+    }
+
+    .task-extra-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 8px;
+    }
+
+    .task-time-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8faf5;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+
+    .task-time-picker-wrap input[type="time"] {
+      border: none;
+      background: transparent;
+      font-size: 0.75rem;
+      color: var(--text-main);
+      font-weight: 600;
+      outline: none;
+    }
+
+    .category-chips {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      flex: 1;
+    }
+
+    .chip-btn {
+      background: var(--bg-app);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+
+    .chip-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(163, 170, 90, 0.3);
+    }
+
+    /* Filter Tabs */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      background: #eef2e6;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    .filter-btn {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-align: center;
+    }
+
+    .filter-btn.active {
+      background: #ffffff;
+      color: var(--primary-darker);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Task List Items */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-normal);
+      position: relative;
+    }
+
+    .task-item.completed {
+      background: #fbfcf9;
+      border-color: #eef2e6;
+      opacity: 0.75;
+    }
+
+    .task-checkbox-wrap {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--primary);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: var(--transition-fast);
+      background: #ffffff;
+    }
+
+    .task-checkbox-wrap svg {
+      opacity: 0;
+      transform: scale(0.4);
+      transition: var(--transition-fast);
+      color: #ffffff;
+    }
+
+    .task-item.completed .task-checkbox-wrap {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .task-item.completed .task-checkbox-wrap svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+      transition: var(--transition-fast);
+    }
+
+    .task-item.completed .task-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .badge-tag {
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.68rem;
+    }
+
+    .tag-kerja { background: #e0f2fe; color: #0369a1; }
+    .tag-belajar { background: #fef3c7; color: #b45309; }
+    .tag-pribadi { background: #f3e8ff; color: #7e22ce; }
+    .tag-penting { background: #ffe4e6; color: #be123c; }
+
+    .badge-time {
+      background: #f1f5f9;
+      color: #475569;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.68rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .badge-date-pill {
+      background: var(--primary-soft);
+      color: var(--primary-darker);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.68rem;
+    }
+
+    .btn-del-task {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .btn-del-task:hover {
+      color: #ef4444;
+      background: #fee2e2;
+    }
+
+    /* ==========================================================================
+       SECTION: KALENDER PLANNING INTERAKTIF
+       ========================================================================== */
+    .calendar-container {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .calendar-month-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cal-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-cal-nav {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: var(--primary-soft);
+      color: var(--primary-darker);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .btn-cal-nav:active {
+      transform: scale(0.92);
+      background: #e2e8d3;
+    }
+
+    .btn-cal-today {
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      color: var(--primary-dark);
+      cursor: pointer;
+    }
+
+    /* Day Names & Days Grid */
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition-fast);
+      background: transparent;
+      border: 1px solid transparent;
+    }
+
+    .cal-day-cell.other-month {
+      color: #cbd5e1;
+      pointer-events: none;
+    }
+
+    .cal-day-cell:hover:not(.other-month) {
+      background: #f8faf5;
+    }
+
+    .cal-day-cell.today {
+      color: var(--primary-darker);
+      font-weight: 800;
+      border-color: var(--primary-light);
+      background: #f9fbf3;
+    }
+
+    .cal-day-cell.selected {
+      background: var(--primary) !important;
+      color: #ffffff !important;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(163, 170, 90, 0.4);
+    }
+
+    .cal-task-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--primary-dark);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 4px;
+    }
+
+    .cal-day-cell.selected .cal-task-dot {
+      background: #ffffff;
+    }
+
+    /* Selected Day Planner Agenda Box */
+    .day-planner-box {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .day-planner-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+    }
+
+    .day-planner-date-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .day-plan-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-darker);
+      background: var(--primary-soft);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* Form Rencana Hari Terpilih */
+    .plan-form-card {
+      background: #fbfcf9;
+      border: 1px dashed var(--primary-light);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .plan-form-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .plan-input-text {
+      flex: 1;
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      outline: none;
+    }
+
+    .plan-input-time {
+      width: 105px;
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 8px 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      outline: none;
+      color: var(--text-main);
+    }
+
+    .plan-form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .plan-category-select {
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      outline: none;
+      color: var(--text-main);
+    }
+
+    .btn-save-plan {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(163, 170, 90, 0.3);
+    }
+
+    /* Day Plan List Items */
+    .day-plan-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .plan-item-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-item-card.completed {
+      opacity: 0.7;
+      background: #fbfcf9;
+    }
+
+    .plan-time-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--primary-darker);
+      background: var(--primary-soft);
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       TAB 2: FOKUS & CUSTOM TIME SELECTOR
+       ========================================================================== */
+    .timer-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+      position: relative;
+    }
+
+    .timer-modes {
+      display: flex;
+      background: #eef2e6;
+      padding: 4px;
+      border-radius: var(--radius-full);
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 8px 6px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-full);
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .mode-btn.active {
+      background: #ffffff;
+      color: var(--primary-darker);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Circular SVG Timer */
+    .timer-display-wrap {
+      position: relative;
+      width: 205px;
+      height: 205px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .timer-bg-circle {
+      fill: none;
+      stroke: #f1f5e9;
+      stroke-width: 10;
+    }
+
+    .timer-progress-circle {
+      fill: none;
+      stroke: url(#timerGradient);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 565.48;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .timer-inner-content {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-clock {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #1e293b;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .timer-session-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      margin-top: 8px;
+    }
+
+    /* Timer Controls */
+    .timer-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .btn-timer-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(163, 170, 90, 0.45);
+      transition: var(--transition-fast);
+    }
+
+    .btn-timer-primary:active {
+      transform: scale(0.95);
+    }
+
+    .btn-timer-secondary {
+      background: #f1f5e9;
+      border: 1px solid var(--border-subtle);
+      color: var(--primary-darker);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .btn-timer-secondary:active {
+      transform: scale(0.92);
+      background: #e2e8d3;
+    }
+
+    /* Preset Quick Buttons & Custom Trigger */
+    .preset-container {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .preset-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 5px 11px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .preset-chip.custom-btn {
+      background: var(--primary-soft);
+      color: var(--primary-darker);
+      border-color: var(--primary);
+      font-weight: 700;
+    }
+
+    .preset-chip:active {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    /* Custom Timer Panel (Drawer / Box) */
+    .custom-timer-panel {
+      background: #ffffff;
+      border: 1.5px solid var(--primary);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      animation: tabFadeIn 0.2s ease-out;
+    }
+
+    .custom-timer-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .custom-stepper-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-step {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      background: #f8faf5;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--primary-darker);
+      cursor: pointer;
+    }
+
+    .btn-step:active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .custom-input-box {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      background: #ffffff;
+    }
+
+    .custom-input-box input {
+      width: 60px;
+      border: none;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .custom-input-box span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .custom-quick-pills {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .quick-pill {
+      background: #f1f5e9;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 4px 9px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-darker);
+      cursor: pointer;
+    }
+
+    .quick-pill:active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .custom-timer-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-apply-custom {
+      flex: 1;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      font-size: 0.84rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(163, 170, 90, 0.35);
+    }
+
+    .btn-cancel-custom {
+      background: #f1f5f9;
+      color: var(--text-secondary);
+      border: none;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+
+    /* Focus Stats Grid */
+    .focus-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       TAB 3: JURNAL
+       ========================================================================== */
+    .journal-prompt-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fafcf6 100%);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .mood-selector-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .mood-options {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+    }
+
+    .mood-pill {
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+
+    .mood-pill.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--primary-darker);
+      box-shadow: 0 2px 6px rgba(163, 170, 90, 0.25);
+    }
+
+    .journal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .journal-input-title {
+      border: 1.5px solid var(--border-light);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+      transition: var(--transition-fast);
+    }
+
+    .journal-input-title:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(163, 170, 90, 0.18);
+    }
+
+    .journal-textarea {
+      border: 1.5px solid var(--border-light);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      color: var(--text-main);
+      outline: none;
+      resize: none;
+      min-height: 80px;
+      transition: var(--transition-fast);
+    }
+
+    .journal-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(163, 170, 90, 0.18);
+    }
+
+    .quick-prompts {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .prompt-chip {
+      background: #f1f5e9;
+      border: 1px dashed var(--primary);
+      border-radius: var(--radius-full);
+      padding: 4px 10px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--primary-darker);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-save-journal {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      box-shadow: 0 4px 12px rgba(163, 170, 90, 0.35);
+      margin-top: 4px;
+    }
+
+    .btn-save-journal:active {
+      transform: scale(0.97);
+    }
+
+    /* Journal Feed List */
+    .journal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .journal-item-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 15px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .journal-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .journal-item-mood {
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: var(--primary-soft);
+      color: var(--primary-darker);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .journal-item-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .journal-item-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .journal-item-body {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      white-space: pre-line;
+      word-break: break-word;
+    }
+
+    .journal-item-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .btn-del-journal {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .btn-del-journal:hover {
+      color: #ef4444;
+      background: #fee2e2;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--text-secondary);
+    }
+
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px auto;
+    }
+
+    .empty-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .empty-subtitle {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       BOTTOM NAVIGATION BAR (Fixed Bottom, Thumb Friendly)
+       ========================================================================== */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-bar-height);
+      background: #ffffff;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 10px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.04);
+      z-index: 40;
+    }
+
+    .nav-tab-btn {
+      flex: 1;
+      height: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition-fast);
+      outline: none;
+      padding: 6px 0;
+    }
+
+    .nav-tab-btn svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+      stroke-width: 2.2;
+    }
+
+    .nav-tab-btn span {
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .nav-tab-btn.active {
+      color: var(--primary-darker);
+    }
+
+    .nav-tab-btn.active svg {
+      color: var(--primary-dark);
+      transform: translateY(-2px) scale(1.12);
+    }
+
+    .nav-tab-btn.active span {
+      font-weight: 800;
+      color: var(--primary-darker);
+    }
+
+    .nav-indicator-pill {
+      position: absolute;
+      top: 6px;
+      width: 44px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: var(--radius-full);
+      opacity: 0;
+      transform: scaleX(0.4);
+      transition: all 0.22s ease;
+    }
+
+    .nav-tab-btn.active .nav-indicator-pill {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+    .nav-tab-btn:active {
+      transform: scale(0.94);
+    }
+
+    /* Toast Notification */
+    .toast-popup {
+      position: absolute;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+    }
+
+    .toast-popup.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- KONTANER SMARTPHONE (Mobile-first, max-width 420px di desktop) -->
+  <main class="phone-container" id="phoneContainer">
+    
+    <!-- HEADER APLIKASI -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>Productivity Hub</h1>
+          <div class="date-badge" id="currentDateDisplay">Memuat tanggal...</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="sound-toggle-btn" id="soundToggleBtn" title="Beralih Suara" aria-label="Beralih Suara">
+          <svg id="soundIconOn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="soundIconOff" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- TOAST ALERT -->
+    <div class="toast-popup" id="toastMessage">
+      <span id="toastIcon">✨</span>
+      <span id="toastText">Pesan pemberitahuan</span>
+    </div>
+
+    <!-- AREA KONTEN (SCROLLABLE) -->
+    <div class="content-area" id="contentArea">
+
+      <!-- ====================================================================
+           TAB 1: TUGAS & KALENDER PLANNING
+           ==================================================================== -->
+      <section class="tab-screen active" id="tabScreenTugas">
+        <!-- Hero Progress Card -->
+        <div class="task-hero-card">
+          <div class="hero-top">
+            <div>
+              <h2>Halo, Semangat! 🌿</h2>
+              <p>Kelola tugas dan rencanakan harimu</p>
+            </div>
+            <div class="hero-progress-label" id="taskPercentLabel">0% Selesai</div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="taskProgressBar"></div>
+          </div>
+          <div class="hero-stats-footer">
+            <span id="taskCountCompleted">0 selesai</span>
+            <span id="taskCountTotal">0 total tugas</span>
+          </div>
+        </div>
+
+        <!-- View Switcher (Daftar Tugas vs Kalender Planning) -->
+        <div class="view-switcher-bar">
+          <button type="button" class="view-switch-btn active" id="viewBtnList">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            Daftar Tugas
+          </button>
+          <button type="button" class="view-switch-btn" id="viewBtnCalendar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Kalender Planning
+          </button>
+        </div>
+
+        <!-- VIEW 1: DAFTAR TUGAS -->
+        <div id="sectionTaskList">
+          <!-- Add Task Form -->
+          <div class="add-task-box">
+            <form id="addTaskForm" class="add-task-input-row">
+              <input 
+                type="text" 
+                class="task-input" 
+                id="taskInputText" 
+                placeholder="Tulis tugas baru hari ini..." 
+                autocomplete="off"
+                required
+              >
+              <button type="submit" class="btn-add-task" id="btnSubmitTask" aria-label="Tambah Tugas">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            </form>
+
+            <div class="task-extra-options">
+              <!-- Category Chip Selector -->
+              <div class="category-chips" id="categoryChips">
+                <button type="button" class="chip-btn active" data-category="Kerja">💼 Kerja</button>
+                <button type="button" class="chip-btn" data-category="Belajar">📚 Belajar</button>
+                <button type="button" class="chip-btn" data-category="Pribadi">🏠 Pribadi</button>
+                <button type="button" class="chip-btn" data-category="Penting">⚡ Penting</button>
+              </div>
+
+              <!-- Optional Custom Time -->
+              <div class="task-time-picker-wrap" title="Tentukan target jam jika diinginkan">
+                <span>⏰</span>
+                <input type="time" id="taskInputTime" title="Target Jam">
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Segment -->
+          <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">Semua</button>
+            <button class="filter-btn" data-filter="active">Aktif</button>
+            <button class="filter-btn" data-filter="completed">Selesai</button>
+          </div>
+
+          <!-- List Tugas -->
+          <div class="task-list" id="taskListContainer">
+            <!-- Diisi via JavaScript -->
+          </div>
+        </div>
+
+        <!-- VIEW 2: KALENDER PLANNING -->
+        <div id="sectionCalendarPlan" style="display: none;">
+          <!-- Widget Kalender Bulanan Interaktif -->
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <div class="calendar-month-title" id="calendarMonthTitle">Oktober 2026</div>
+              <div class="cal-nav-group">
+                <button type="button" class="btn-cal-today" id="btnCalGoToday">Hari Ini</button>
+                <button type="button" class="btn-cal-nav" id="btnCalPrev" aria-label="Bulan Sebelumnya">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+                <button type="button" class="btn-cal-nav" id="btnCalNext" aria-label="Bulan Berikutnya">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Hari dalam Seminggu -->
+            <div class="calendar-weekdays">
+              <span>Min</span>
+              <span>Sen</span>
+              <span>Sel</span>
+              <span>Rab</span>
+              <span>Kam</span>
+              <span>Jum</span>
+              <span>Sab</span>
+            </div>
+
+            <!-- Grid Tanggal -->
+            <div class="calendar-days-grid" id="calendarDaysGrid">
+              <!-- Diisi via JavaScript -->
+            </div>
+          </div>
+
+          <!-- Panel Jadwal Tanggal Terpilih -->
+          <div class="day-planner-box">
+            <div class="day-planner-header">
+              <div>
+                <div class="day-planner-date-title" id="selectedDateDisplayTitle">Rabu, 7 Oktober 2026</div>
+                <span style="font-size: 0.72rem; color: var(--text-secondary);">Rencana & Agenda Tanggal Ini</span>
+              </div>
+              <span class="day-plan-count" id="selectedDateCountBadge">0 Agenda</span>
+            </div>
+
+            <!-- Form Tambah Rencana Cepat di Kalender -->
+            <form id="addPlanForm" class="plan-form-card">
+              <div class="plan-form-row">
+                <input 
+                  type="text" 
+                  class="plan-input-text" 
+                  id="planInputTitle" 
+                  placeholder="Rencanakan agenda / tugas..." 
+                  required
+                >
+                <input 
+                  type="time" 
+                  class="plan-input-time" 
+                  id="planInputTime" 
+                  value="09:00"
+                  required
+                  title="Waktu Rencana"
+                >
+              </div>
+              <div class="plan-form-footer">
+                <select class="plan-category-select" id="planCategorySelect">
+                  <option value="Kerja">💼 Kerja</option>
+                  <option value="Belajar">📚 Belajar</option>
+                  <option value="Pribadi">🏠 Pribadi</option>
+                  <option value="Penting">⚡ Penting</option>
+                </select>
+
+                <button type="submit" class="btn-save-plan">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Jadwalkan
+                </button>
+              </div>
+            </form>
+
+            <!-- Daftar Rencana Hari Terpilih -->
+            <div class="day-plan-list" id="selectedDatePlanList">
+              <!-- Diisi via JavaScript -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB 2: FOKUS (Timer Icon & Custom Time)
+           ==================================================================== -->
+      <section class="tab-screen" id="tabScreenFokus">
+        <div class="timer-card">
+          <!-- Mode Tabs -->
+          <div class="timer-modes">
+            <button class="mode-btn active" data-mode="pomodoro" data-duration="25">Fokus (25m)</button>
+            <button class="mode-btn" data-mode="short" data-duration="5">Rehat (5m)</button>
+            <button class="mode-btn" data-mode="long" data-duration="15">Istirahat (15m)</button>
+          </div>
+
+          <!-- Circular SVG Countdown -->
+          <div class="timer-display-wrap">
+            <svg class="timer-svg" viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#a3aa5a" />
+                  <stop offset="100%" stop-color="#7b823b" />
+                </linearGradient>
+              </defs>
+              <circle class="timer-bg-circle" cx="100" cy="100" r="90" />
+              <circle class="timer-progress-circle" id="timerProgressRing" cx="100" cy="100" r="90" />
+            </svg>
+            <div class="timer-inner-content">
+              <div class="timer-clock" id="timerClockDisplay">25:00</div>
+              <div class="timer-session-label" id="timerSessionStatus">Sesi Fokus</div>
+            </div>
+          </div>
+
+          <!-- Main Actions -->
+          <div class="timer-actions">
+            <button class="btn-timer-secondary" id="btnResetTimer" title="Ulang Timer" aria-label="Reset Timer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+            </button>
+            
+            <button class="btn-timer-primary" id="btnToggleTimer" title="Mulai / Jeda" aria-label="Toggle Timer">
+              <!-- Play Icon -->
+              <svg id="timerIconPlay" width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+              </svg>
+              <!-- Pause Icon -->
+              <svg id="timerIconPause" width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+                <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+              </svg>
+            </button>
+
+            <button class="btn-timer-secondary" id="btnSkipTimer" title="Lompat ke Sesi Berikutnya" aria-label="Skip Sesi">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Presets & Custom Trigger -->
+          <div class="preset-container">
+            <button class="preset-chip" data-add="5">+5 Mnt</button>
+            <button class="preset-chip" data-set="15">15 Mnt</button>
+            <button class="preset-chip" data-set="25">25 Mnt</button>
+            <button class="preset-chip" data-set="45">45 Mnt</button>
+            <button class="preset-chip custom-btn" id="btnOpenCustomTimer">⚙️ Kustom Waktu</button>
+          </div>
+
+          <!-- Panel Kustom Waktu (Interaktif) -->
+          <div class="custom-timer-panel" id="customTimerPanel" style="display: none;">
+            <div class="custom-timer-title">⏱️ Tentukan Waktu Kustom</div>
+            
+            <div class="custom-stepper-row">
+              <button type="button" class="btn-step" id="btnStepMinus5">-5</button>
+              <button type="button" class="btn-step" id="btnStepMinus1">-1</button>
+              <div class="custom-input-box">
+                <input type="number" id="customMinutesInput" min="1" max="180" value="30">
+                <span>menit</span>
+              </div>
+              <button type="button" class="btn-step" id="btnStepPlus1">+1</button>
+              <button type="button" class="btn-step" id="btnStepPlus5">+5</button>
+            </div>
+
+            <!-- Quick Pill Presets -->
+            <div class="custom-quick-pills">
+              <button type="button" class="quick-pill" data-min="10">10m</button>
+              <button type="button" class="quick-pill" data-min="20">20m</button>
+              <button type="button" class="quick-pill" data-min="30">30m</button>
+              <button type="button" class="quick-pill" data-min="45">45m</button>
+              <button type="button" class="quick-pill" data-min="60">60m</button>
+              <button type="button" class="quick-pill" data-min="90">90m</button>
+            </div>
+
+            <div class="custom-timer-actions">
+              <button type="button" class="btn-apply-custom" id="btnApplyCustomTimer">Terapkan Durasi</button>
+              <button type="button" class="btn-cancel-custom" id="btnCancelCustomTimer">Batal</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Focus Stats Cards -->
+        <div class="focus-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-num" id="statFocusMinutes">0</div>
+              <div class="stat-label">Menit Fokus Hari Ini</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-num" id="statFocusSessions">0</div>
+              <div class="stat-label">Sesi Selesai</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB 3: JURNAL (Catatan Buku Icon)
+           ==================================================================== -->
+      <section class="tab-screen" id="tabScreenJurnal">
+        <!-- Input Jurnal & Refleksi -->
+        <div class="journal-prompt-card">
+          <div class="mood-selector-title">Mood & Suasana Hati Hari Ini</div>
+          <div class="mood-options" id="moodSelector">
+            <button type="button" class="mood-pill active" data-mood="😊 Produktif">
+              <span>😊</span> Produktif
+            </button>
+            <button type="button" class="mood-pill" data-mood="🌿 Tenang">
+              <span>🌿</span> Tenang
+            </button>
+            <button type="button" class="mood-pill" data-mood="⚡ Semangat">
+              <span>⚡</span> Semangat
+            </button>
+            <button type="button" class="mood-pill" data-mood="✨ Bersyukur">
+              <span>✨</span> Bersyukur
+            </button>
+            <button type="button" class="mood-pill" data-mood="😴 Lelah">
+              <span>😴</span> Lelah
+            </button>
+          </div>
+
+          <form id="journalEntryForm" class="journal-form">
+            <input 
+              type="text" 
+              class="journal-input-title" 
+              id="journalInputTitle" 
+              placeholder="Judul catatan / pencapaian..." 
+              required
+            >
+            
+            <div class="quick-prompts">
+              <button type="button" class="prompt-chip" data-prompt="Kemenangan terbesarku hari ini adalah ">🏆 Kemenangan hari ini</button>
+              <button type="button" class="prompt-chip" data-prompt="Hal yang membuatku bersyukur hari ini: ">🙏 Bersyukur</button>
+              <button type="button" class="prompt-chip" data-prompt="Pelajaran berharga yang kudapat: ">💡 Pelajaran</button>
+            </div>
+
+            <textarea 
+              class="journal-textarea" 
+              id="journalInputBody" 
+              placeholder="Tuliskan refleksi, rasa syukur, atau ide berhargamu di sini..." 
+              rows="3"
+              required
+            ></textarea>
+
+            <button type="submit" class="btn-save-journal" id="btnSubmitJournal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Simpan ke Jurnal
+            </button>
+          </form>
+        </div>
+
+        <!-- Riwayat Catatan Jurnal -->
+        <div class="card-title">
+          <span>Riwayat Refleksi</span>
+          <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;" id="journalCountBadge">0 Catatan</span>
+        </div>
+
+        <div class="journal-list" id="journalListContainer">
+          <!-- Diisi via JavaScript -->
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ======================================================================
+         BOTTOM NAVIGATION BAR (Fixed Bottom - Thumb Friendly)
+         Tab 1: Tugas (Ikon Check-Square)
+         Tab 2: Fokus (Ikon Timer)
+         Tab 3: Jurnal (Ikon Catatan Buku)
+         ====================================================================== -->
+    <nav class="bottom-nav" id="bottomNav" aria-label="Navigasi Utama">
+      <!-- Tab 1: Tugas (Check-Square) -->
+      <button class="nav-tab-btn active" id="navBtnTugas" data-target="tabScreenTugas" aria-label="Tab Tugas">
+        <div class="nav-indicator-pill"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"></polyline>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+        <span>Tugas</span>
+      </button>
+
+      <!-- Tab 2: Fokus (Timer) -->
+      <button class="nav-tab-btn" id="navBtnFokus" data-target="tabScreenFokus" aria-label="Tab Fokus">
+        <div class="nav-indicator-pill"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="10" y1="2" x2="14" y2="2"></line>
+          <line x1="12" y1="14" x2="15" y2="11"></line>
+          <circle cx="12" cy="14" r="8"></circle>
+        </svg>
+        <span>Fokus</span>
+      </button>
+
+      <!-- Tab 3: Jurnal (Catatan Buku) -->
+      <button class="nav-tab-btn" id="navBtnJurnal" data-target="tabScreenJurnal" aria-label="Tab Jurnal">
+        <div class="nav-indicator-pill"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          <line x1="8" y1="6" x2="16" y2="6"></line>
+          <line x1="8" y1="10" x2="16" y2="10"></line>
+          <line x1="8" y1="14" x2="12" y2="14"></line>
+        </svg>
+        <span>Jurnal</span>
+      </button>
+    </nav>
+
+  </main>
+
+  <!-- ========================================================================
+       JAVASCRIPT MURNI (LOGIC, LOCALSTORAGE & INTERACTIVITY)
+       ======================================================================== -->
+  <script>
+    (function() {
+      'use strict';
+
+      /* ----------------------------------------------------------------------
+         1. AUDIO CHIMES (Web Audio API)
+         ---------------------------------------------------------------------- */
+      let audioCtx = null;
+      let soundEnabled = true;
+
+      function getAudioContext() {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playChime(type) {
+        if (!soundEnabled) return;
+        try {
+          const ctx = getAudioContext();
+          if (!ctx) return;
+
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          if (type === 'complete') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+            osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.16);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+          } else if (type === 'timerEnd') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(880, now);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+            osc.start(now);
+            osc.stop(now + 1.2);
+          } else if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, now);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+            osc.start(now);
+            osc.stop(now + 0.06);
+          }
+        } catch (e) {
+          console.warn('Audio tidak dapat diputar:', e);
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         2. TOAST NOTIFICATION HELPER
+         ---------------------------------------------------------------------- */
+      const toastEl = document.getElementById('toastMessage');
+      const toastTextEl = document.getElementById('toastText');
+      const toastIconEl = document.getElementById('toastIcon');
+      let toastTimer = null;
+
+      function showToast(message, icon = '✨') {
+        if (!toastEl) return;
+        toastTextEl.textContent = message;
+        toastIconEl.textContent = icon;
+        toastEl.classList.add('visible');
+
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove('visible');
+        }, 2400);
+      }
+
+      /* ----------------------------------------------------------------------
+         3. FORMAT TANGGAL HELPER
+         ---------------------------------------------------------------------- */
+      const monthNamesIndo = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+      ];
+
+      function formatYMD(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+
+      function updateHeaderDate() {
+        const dateEl = document.getElementById('currentDateDisplay');
+        const now = new Date();
+        const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+        try {
+          dateEl.textContent = now.toLocaleDateString('id-ID', options);
+        } catch (e) {
+          dateEl.textContent = now.toDateString();
+        }
+      }
+      updateHeaderDate();
+
+      /* ----------------------------------------------------------------------
+         4. SOUND TOGGLE BUTTON
+         ---------------------------------------------------------------------- */
+      const soundToggleBtn = document.getElementById('soundToggleBtn');
+      const soundIconOn = document.getElementById('soundIconOn');
+      const soundIconOff = document.getElementById('soundIconOff');
+
+      soundToggleBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        if (soundEnabled) {
+          soundIconOn.style.display = 'block';
+          soundIconOff.style.display = 'none';
+          showToast('Suara diaktifkan', '🔊');
+          playChime('click');
+        } else {
+          soundIconOn.style.display = 'none';
+          soundIconOff.style.display = 'block';
+          showToast('Suara dibisukan', '🔇');
+        }
+      });
+
+      /* ----------------------------------------------------------------------
+         5. BOTTOM NAVIGATION BAR SWITCHING
+         ---------------------------------------------------------------------- */
+      const navButtons = document.querySelectorAll('.nav-tab-btn');
+      const tabScreens = document.querySelectorAll('.tab-screen');
+      const contentArea = document.getElementById('contentArea');
+
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetScreenId = btn.getAttribute('data-target');
+
+          navButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          tabScreens.forEach(screen => {
+            if (screen.id === targetScreenId) {
+              screen.classList.add('active');
+            } else {
+              screen.classList.remove('active');
+            }
+          });
+
+          contentArea.scrollTo({ top: 0, behavior: 'smooth' });
+          playChime('click');
+        });
+      });
+
+      /* ----------------------------------------------------------------------
+         6. TAB 1: VIEW SWITCHER (DAFTAR TUGAS VS KALENDER PLANNING)
+         ---------------------------------------------------------------------- */
+      const viewBtnList = document.getElementById('viewBtnList');
+      const viewBtnCalendar = document.getElementById('viewBtnCalendar');
+      const sectionTaskList = document.getElementById('sectionTaskList');
+      const sectionCalendarPlan = document.getElementById('sectionCalendarPlan');
+
+      viewBtnList.addEventListener('click', () => {
+        viewBtnList.classList.add('active');
+        viewBtnCalendar.classList.remove('active');
+        sectionTaskList.style.display = 'block';
+        sectionCalendarPlan.style.display = 'none';
+        playChime('click');
+      });
+
+      viewBtnCalendar.addEventListener('click', () => {
+        viewBtnCalendar.classList.add('active');
+        viewBtnList.classList.remove('active');
+        sectionCalendarPlan.style.display = 'block';
+        sectionTaskList.style.display = 'none';
+        renderCalendar();
+        renderSelectedDatePlan();
+        playChime('click');
+      });
+
+      /* ----------------------------------------------------------------------
+         7. DATA TUGAS & PLANNING (LOCALSTORAGE)
+         ---------------------------------------------------------------------- */
+      const todayDateObj = new Date();
+      const todayYMD = formatYMD(todayDateObj);
+
+      const defaultTasks = [
+        { id: '1', title: 'Periksa jadwal & prioritas minggu ini', category: 'Kerja', completed: true, date: todayYMD, time: '08:30', createdAt: Date.now() - 3600000 },
+        { id: '2', title: 'Belajar konsep JavaScript & Modern Web', category: 'Belajar', completed: false, date: todayYMD, time: '10:00', createdAt: Date.now() - 1800000 },
+        { id: '3', title: 'Sesi Fokus Pomodoro 25 Menit', category: 'Penting', completed: false, date: todayYMD, time: '14:00', createdAt: Date.now() - 900000 },
+        { id: '4', title: 'Jalan santai sore & minum air putih', category: 'Pribadi', completed: false, date: todayYMD, time: '17:00', createdAt: Date.now() }
+      ];
+
+      let tasks = JSON.parse(localStorage.getItem('prodhub_tasks')) || defaultTasks;
+      let selectedCategory = 'Kerja';
+      let currentFilter = 'all';
+
+      // Elements
+      const addTaskForm = document.getElementById('addTaskForm');
+      const taskInputText = document.getElementById('taskInputText');
+      const taskInputTime = document.getElementById('taskInputTime');
+      const categoryChips = document.getElementById('categoryChips');
+      const taskListContainer = document.getElementById('taskListContainer');
+      const taskProgressBar = document.getElementById('taskProgressBar');
+      const taskPercentLabel = document.getElementById('taskPercentLabel');
+      const taskCountCompleted = document.getElementById('taskCountCompleted');
+      const taskCountTotal = document.getElementById('taskCountTotal');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+
+      function saveTasks() {
+        localStorage.setItem('prodhub_tasks', JSON.stringify(tasks));
+        renderTasks();
+        renderCalendar();
+        renderSelectedDatePlan();
+      }
+
+      // Kategori Chip Selector
+      categoryChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-btn');
+        if (!chip) return;
+        categoryChips.querySelectorAll('.chip-btn').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedCategory = chip.getAttribute('data-category');
+        playChime('click');
+      });
+
+      // Filter Buttons
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-filter');
+          playChime('click');
+          renderTasks();
+        });
+      });
+
+      // Submit Form Tambah Tugas di List View
+      addTaskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = taskInputText.value.trim();
+        if (!text) return;
+
+        const customTime = taskInputTime.value || '';
+
+        const newTask = {
+          id: Date.now().toString(),
+          title: text,
+          category: selectedCategory,
+          completed: false,
+          date: todayYMD,
+          time: customTime,
+          createdAt: Date.now()
+        };
+
+        tasks.unshift(newTask);
+        taskInputText.value = '';
+        taskInputTime.value = '';
+        saveTasks();
+        showToast('Tugas ditambahkan!', '📝');
+        playChime('click');
+      });
+
+      // Render Daftar Tugas
+      function renderTasks() {
+        const total = tasks.length;
+        const completedCount = tasks.filter(t => t.completed).length;
+        const percent = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+
+        taskProgressBar.style.width = percent + '%';
+        taskPercentLabel.textContent = `${percent}% Selesai`;
+        taskCountCompleted.textContent = `${completedCount} selesai`;
+        taskCountTotal.textContent = `${total} total tugas`;
+
+        let filteredTasks = tasks;
+        if (currentFilter === 'active') {
+          filteredTasks = tasks.filter(t => !t.completed);
+        } else if (currentFilter === 'completed') {
+          filteredTasks = tasks.filter(t => t.completed);
+        }
+
+        if (filteredTasks.length === 0) {
+          taskListContainer.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <div class="empty-title">Tidak ada tugas ${currentFilter === 'completed' ? 'selesai' : (currentFilter === 'active' ? 'aktif' : '')}</div>
+              <div class="empty-subtitle">${currentFilter === 'all' ? 'Mulai rencanakan harimu dengan menambah tugas baru.' : 'Semua sudah beres di kategori ini.'}</div>
+            </div>
+          `;
+          return;
+        }
+
+        taskListContainer.innerHTML = filteredTasks.map(t => {
+          const catClass = 'tag-' + (t.category ? t.category.toLowerCase() : 'kerja');
+          const timeBadge = t.time ? `<span class="badge-time">⏰ ${escapeHtml(t.time)}</span>` : '';
+          const dateBadge = t.date ? `<span class="badge-date-pill">📅 ${formatReadableShortDate(t.date)}</span>` : '';
+
+          return `
+            <div class="task-item ${t.completed ? 'completed' : ''}" data-id="${t.id}">
+              <div class="task-checkbox-wrap" onclick="window.toggleTaskCompleted('${t.id}')" title="Centang Tugas">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="task-content" onclick="window.toggleTaskCompleted('${t.id}')">
+                <div class="task-text">${escapeHtml(t.title)}</div>
+                <div class="task-meta">
+                  <span class="badge-tag ${catClass}">${escapeHtml(t.category)}</span>
+                  ${timeBadge}
+                  ${dateBadge}
+                </div>
+              </div>
+              <button class="btn-del-task" onclick="window.deleteTask('${t.id}')" title="Hapus Tugas" aria-label="Hapus Tugas">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.toggleTaskCompleted = function(id) {
+        tasks = tasks.map(t => {
+          if (t.id === id) {
+            const nextState = !t.completed;
+            if (nextState) playChime('complete');
+            return { ...t, completed: nextState };
+          }
+          return t;
+        });
+        saveTasks();
+      };
+
+      window.deleteTask = function(id) {
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        showToast('Tugas dihapus', '🗑️');
+      };
+
+      function formatReadableShortDate(ymdStr) {
+        if (!ymdStr) return '';
+        const parts = ymdStr.split('-');
+        if (parts.length !== 3) return ymdStr;
+        const d = parseInt(parts[2], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        return `${d} ${shortMonths[m] || ''}`;
+      }
+
+      /* ----------------------------------------------------------------------
+         8. KALENDER PLANNING INTERAKTIF
+         ---------------------------------------------------------------------- */
+      let calendarYear = todayDateObj.getFullYear();
+      let calendarMonth = todayDateObj.getMonth(); // 0 - 11
+      let selectedPlanDateYMD = todayYMD;
+
+      const calendarMonthTitle = document.getElementById('calendarMonthTitle');
+      const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+      const btnCalPrev = document.getElementById('btnCalPrev');
+      const btnCalNext = document.getElementById('btnCalNext');
+      const btnCalGoToday = document.getElementById('btnCalGoToday');
+      const selectedDateDisplayTitle = document.getElementById('selectedDateDisplayTitle');
+      const selectedDateCountBadge = document.getElementById('selectedDateCountBadge');
+      const selectedDatePlanList = document.getElementById('selectedDatePlanList');
+      const addPlanForm = document.getElementById('addPlanForm');
+      const planInputTitle = document.getElementById('planInputTitle');
+      const planInputTime = document.getElementById('planInputTime');
+      const planCategorySelect = document.getElementById('planCategorySelect');
+
+      btnCalPrev.addEventListener('click', () => {
+        calendarMonth--;
+        if (calendarMonth < 0) {
+          calendarMonth = 11;
+          calendarYear--;
+        }
+        renderCalendar();
+        playChime('click');
+      });
+
+      btnCalNext.addEventListener('click', () => {
+        calendarMonth++;
+        if (calendarMonth > 11) {
+          calendarMonth = 0;
+          calendarYear++;
+        }
+        renderCalendar();
+        playChime('click');
+      });
+
+      btnCalGoToday.addEventListener('click', () => {
+        const now = new Date();
+        calendarYear = now.getFullYear();
+        calendarMonth = now.getMonth();
+        selectedPlanDateYMD = todayYMD;
+        renderCalendar();
+        renderSelectedDatePlan();
+        playChime('click');
+        showToast('Kembali ke hari ini', '📅');
+      });
+
+      function renderCalendar() {
+        calendarMonthTitle.textContent = `${monthNamesIndo[calendarMonth]} ${calendarYear}`;
+
+        const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay(); // 0 = Minggu
+        const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+        const daysInPrevMonth = new Date(calendarYear, calendarMonth, 0).getDate();
+
+        // Cari tanggal mana saja yang memiliki tugas
+        const tasksByDate = new Set();
+        tasks.forEach(t => {
+          if (t.date) tasksByDate.add(t.date);
+        });
+
+        let html = '';
+
+        // Hari dari bulan sebelumnya
+        for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+          const prevDay = daysInPrevMonth - i;
+          html += `<div class="cal-day-cell other-month">${prevDay}</div>`;
+        }
+
+        // Hari di bulan aktif
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dStr = String(day).padStart(2, '0');
+          const mStr = String(calendarMonth + 1).padStart(2, '0');
+          const cellYMD = `${calendarYear}-${mStr}-${dStr}`;
+
+          const isToday = (cellYMD === todayYMD);
+          const isSelected = (cellYMD === selectedPlanDateYMD);
+          const hasTasks = tasksByDate.has(cellYMD);
+
+          let classNames = 'cal-day-cell';
+          if (isToday) classNames += ' today';
+          if (isSelected) classNames += ' selected';
+
+          const dotHtml = hasTasks ? `<div class="cal-task-dot"></div>` : '';
+
+          html += `
+            <div class="${classNames}" onclick="window.selectCalendarDate('${cellYMD}')">
+              <span>${day}</span>
+              ${dotHtml}
+            </div>
+          `;
+        }
+
+        // Lengkapi grid hingga kelipatan 7
+        const totalCells = firstDayOfMonth + daysInMonth;
+        const remainder = totalCells % 7;
+        if (remainder !== 0) {
+          const nextDaysCount = 7 - remainder;
+          for (let nextDay = 1; nextDay <= nextDaysCount; nextDay++) {
+            html += `<div class="cal-day-cell other-month">${nextDay}</div>`;
+          }
+        }
+
+        calendarDaysGrid.innerHTML = html;
+      }
+
+      window.selectCalendarDate = function(ymd) {
+        selectedPlanDateYMD = ymd;
+        renderCalendar();
+        renderSelectedDatePlan();
+        playChime('click');
+      };
+
+      function renderSelectedDatePlan() {
+        const parts = selectedPlanDateYMD.split('-');
+        if (parts.length === 3) {
+          const dObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+          const dayNamesIndo = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+          const dayName = dayNamesIndo[dObj.getDay()];
+          const mName = monthNamesIndo[dObj.getMonth()];
+          selectedDateDisplayTitle.textContent = `${dayName}, ${dObj.getDate()} ${mName} ${dObj.getFullYear()}`;
+        }
+
+        // Filter tugas untuk tanggal ini
+        const dayTasks = tasks.filter(t => t.date === selectedPlanDateYMD);
+        // Urutkan berdasarkan waktu jika ada
+        dayTasks.sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+
+        selectedDateCountBadge.textContent = `${dayTasks.length} Agenda`;
+
+        if (dayTasks.length === 0) {
+          selectedDatePlanList.innerHTML = `
+            <div class="empty-state" style="padding: 16px;">
+              <div class="empty-subtitle">Belum ada agenda pada tanggal ini. Tulis rencana di formulir atas!</div>
+            </div>
+          `;
+          return;
+        }
+
+        selectedDatePlanList.innerHTML = dayTasks.map(plan => {
+          const catClass = 'tag-' + (plan.category ? plan.category.toLowerCase() : 'kerja');
+          const timeLabel = plan.time ? plan.time : 'Bebas';
+
+          return `
+            <div class="plan-item-card ${plan.completed ? 'completed' : ''}" data-id="${plan.id}">
+              <div class="task-checkbox-wrap" onclick="window.toggleTaskCompleted('${plan.id}')" title="Centang Selesai">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <span class="plan-time-tag">⏰ ${escapeHtml(timeLabel)}</span>
+              <div class="task-content" onclick="window.toggleTaskCompleted('${plan.id}')">
+                <div class="task-text">${escapeHtml(plan.title)}</div>
+                <div class="task-meta">
+                  <span class="badge-tag ${catClass}">${escapeHtml(plan.category)}</span>
+                </div>
+              </div>
+              <button class="btn-del-task" onclick="window.deleteTask('${plan.id}')" title="Hapus Agenda">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                </svg>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Submit Form Rencana di Kalender
+      addPlanForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = planInputTitle.value.trim();
+        const timeVal = planInputTime.value.trim();
+        const categoryVal = planCategorySelect.value;
+        if (!text) return;
+
+        const newPlan = {
+          id: Date.now().toString(),
+          title: text,
+          category: categoryVal,
+          completed: false,
+          date: selectedPlanDateYMD,
+          time: timeVal,
+          createdAt: Date.now()
+        };
+
+        tasks.unshift(newPlan);
+        planInputTitle.value = '';
+        saveTasks();
+        showToast('Agenda dijadwalkan ke kalender!', '📅');
+        playChime('complete');
+      });
+
+      renderTasks();
+      renderCalendar();
+      renderSelectedDatePlan();
+
+      /* ----------------------------------------------------------------------
+         9. TAB 2: FOKUS & CUSTOM TIME SELECTOR
+         ---------------------------------------------------------------------- */
+      let timerDuration = 25 * 60;
+      let timerRemaining = 25 * 60;
+      let timerRunning = false;
+      let timerInterval = null;
+      let currentTimerMode = 'pomodoro';
+
+      let focusStats = JSON.parse(localStorage.getItem('prodhub_focus_stats')) || {
+        minutes: 0,
+        sessions: 0
+      };
+
+      const timerClockDisplay = document.getElementById('timerClockDisplay');
+      const timerSessionStatus = document.getElementById('timerSessionStatus');
+      const timerProgressRing = document.getElementById('timerProgressRing');
+      const btnToggleTimer = document.getElementById('btnToggleTimer');
+      const btnResetTimer = document.getElementById('btnResetTimer');
+      const btnSkipTimer = document.getElementById('btnSkipTimer');
+      const timerIconPlay = document.getElementById('timerIconPlay');
+      const timerIconPause = document.getElementById('timerIconPause');
+      const modeButtons = document.querySelectorAll('.mode-btn');
+      const statFocusMinutes = document.getElementById('statFocusMinutes');
+      const statFocusSessions = document.getElementById('statFocusSessions');
+      const presetButtons = document.querySelectorAll('.preset-chip:not(.custom-btn)');
+
+      // Custom Timer Elements
+      const btnOpenCustomTimer = document.getElementById('btnOpenCustomTimer');
+      const customTimerPanel = document.getElementById('customTimerPanel');
+      const customMinutesInput = document.getElementById('customMinutesInput');
+      const btnStepMinus5 = document.getElementById('btnStepMinus5');
+      const btnStepMinus1 = document.getElementById('btnStepMinus1');
+      const btnStepPlus1 = document.getElementById('btnStepPlus1');
+      const btnStepPlus5 = document.getElementById('btnStepPlus5');
+      const btnApplyCustomTimer = document.getElementById('btnApplyCustomTimer');
+      const btnCancelCustomTimer = document.getElementById('btnCancelCustomTimer');
+      const quickPills = document.querySelectorAll('.quick-pill');
+
+      const CIRCUMFERENCE = 2 * Math.PI * 90;
+      timerProgressRing.style.strokeDasharray = CIRCUMFERENCE;
+
+      function updateTimerDisplay() {
+        const minutes = Math.floor(timerRemaining / 60);
+        const seconds = timerRemaining % 60;
+        timerClockDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        const progress = (timerDuration - timerRemaining) / timerDuration;
+        const offset = CIRCUMFERENCE - (progress * CIRCUMFERENCE);
+        timerProgressRing.style.strokeDashoffset = offset;
+      }
+
+      function updateStatsDisplay() {
+        statFocusMinutes.textContent = focusStats.minutes;
+        statFocusSessions.textContent = focusStats.sessions;
+        localStorage.setItem('prodhub_focus_stats', JSON.stringify(focusStats));
+      }
+
+      function startTimer() {
+        if (timerRunning) return;
+        getAudioContext();
+        timerRunning = true;
+        timerIconPlay.style.display = 'none';
+        timerIconPause.style.display = 'block';
+
+        timerInterval = setInterval(() => {
+          if (timerRemaining > 0) {
+            timerRemaining--;
+            updateTimerDisplay();
+          } else {
+            completeTimerSession();
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        if (!timerRunning) return;
+        timerRunning = false;
+        clearInterval(timerInterval);
+        timerIconPlay.style.display = 'block';
+        timerIconPause.style.display = 'none';
+      }
+
+      function resetTimer() {
+        pauseTimer();
+        timerRemaining = timerDuration;
+        updateTimerDisplay();
+        playChime('click');
+      }
+
+      function completeTimerSession() {
+        pauseTimer();
+        playChime('timerEnd');
+
+        if (currentTimerMode === 'pomodoro' || currentTimerMode === 'custom') {
+          const minutesAdded = Math.round(timerDuration / 60);
+          focusStats.minutes += minutesAdded;
+          focusStats.sessions += 1;
+          updateStatsDisplay();
+          showToast(`Luar biasa! ${minutesAdded} menit fokus tercapai 🎉`, '🏆');
+          setTimerMode('short', 5);
+        } else {
+          showToast('Waktu rehat selesai! Siap konsentrasi lagi? 💪', '⏰');
+          setTimerMode('pomodoro', 25);
+        }
+      }
+
+      function setTimerMode(mode, minutes) {
+        currentTimerMode = mode;
+        timerDuration = minutes * 60;
+        timerRemaining = timerDuration;
+
+        modeButtons.forEach(btn => {
+          if (btn.getAttribute('data-mode') === mode) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        if (mode === 'pomodoro') {
+          timerSessionStatus.textContent = 'Sesi Fokus';
+        } else if (mode === 'short') {
+          timerSessionStatus.textContent = 'Rehat Singkat';
+        } else if (mode === 'long') {
+          timerSessionStatus.textContent = 'Istirahat Panjang';
+        } else {
+          timerSessionStatus.textContent = `Kustom (${minutes}m)`;
+        }
+
+        pauseTimer();
+        updateTimerDisplay();
+      }
+
+      // Event listener tombol Timer
+      btnToggleTimer.addEventListener('click', () => {
+        if (timerRunning) {
+          pauseTimer();
+          playChime('click');
+        } else {
+          startTimer();
+          playChime('click');
+        }
+      });
+
+      btnResetTimer.addEventListener('click', resetTimer);
+
+      btnSkipTimer.addEventListener('click', () => {
+        completeTimerSession();
+      });
+
+      modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-mode');
+          const duration = parseInt(btn.getAttribute('data-duration'), 10);
+          setTimerMode(mode, duration);
+          playChime('click');
+        });
+      });
+
+      // Presets
+      presetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.hasAttribute('data-add')) {
+            const addMin = parseInt(btn.getAttribute('data-add'), 10);
+            timerRemaining += addMin * 60;
+            timerDuration += addMin * 60;
+            updateTimerDisplay();
+            showToast(`+${addMin} menit ditambahkan`, '⏱️');
+          } else if (btn.hasAttribute('data-set')) {
+            const setMin = parseInt(btn.getAttribute('data-set'), 10);
+            timerDuration = setMin * 60;
+            timerRemaining = timerDuration;
+            pauseTimer();
+            updateTimerDisplay();
+            showToast(`Timer diatur ke ${setMin} menit`, '⏱️');
+          }
+          playChime('click');
+        });
+      });
+
+      // Fitur Kustom Waktu Interaktif
+      btnOpenCustomTimer.addEventListener('click', () => {
+        const isHidden = customTimerPanel.style.display === 'none';
+        customTimerPanel.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          customMinutesInput.value = Math.max(1, Math.round(timerDuration / 60));
+        }
+        playChime('click');
+      });
+
+      btnCancelCustomTimer.addEventListener('click', () => {
+        customTimerPanel.style.display = 'none';
+        playChime('click');
+      });
+
+      btnStepMinus5.addEventListener('click', () => {
+        let val = parseInt(customMinutesInput.value, 10) || 25;
+        customMinutesInput.value = Math.max(1, val - 5);
+        playChime('click');
+      });
+
+      btnStepMinus1.addEventListener('click', () => {
+        let val = parseInt(customMinutesInput.value, 10) || 25;
+        customMinutesInput.value = Math.max(1, val - 1);
+        playChime('click');
+      });
+
+      btnStepPlus1.addEventListener('click', () => {
+        let val = parseInt(customMinutesInput.value, 10) || 25;
+        customMinutesInput.value = Math.min(180, val + 1);
+        playChime('click');
+      });
+
+      btnStepPlus5.addEventListener('click', () => {
+        let val = parseInt(customMinutesInput.value, 10) || 25;
+        customMinutesInput.value = Math.min(180, val + 5);
+        playChime('click');
+      });
+
+      quickPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          customMinutesInput.value = pill.getAttribute('data-min');
+          playChime('click');
+        });
+      });
+
+      btnApplyCustomTimer.addEventListener('click', () => {
+        const minVal = parseInt(customMinutesInput.value, 10);
+        if (isNaN(minVal) || minVal < 1 || minVal > 180) {
+          showToast('Masukkan durasi antara 1 - 180 menit', '⚠️');
+          return;
+        }
+
+        setTimerMode('custom', minVal);
+        customTimerPanel.style.display = 'none';
+        showToast(`Waktu kustom ${minVal} menit diterapkan!`, '⏱️');
+        playChime('complete');
+      });
+
+      updateTimerDisplay();
+      updateStatsDisplay();
+
+      /* ----------------------------------------------------------------------
+         10. TAB 3: LOGIKA JURNAL
+         ---------------------------------------------------------------------- */
+      const defaultJournals = [
+        {
+          id: 'j1',
+          mood: '😊 Produktif',
+          title: 'Memulai hari dengan rencana yang tertata',
+          body: 'Hari ini berhasil merapikan prioritas tugas dan mulai fokus mendalam tanpa distraksi media sosial.',
+          date: 'Hari ini, 09:30'
+        },
+        {
+          id: 'j2',
+          mood: '🌿 Tenang',
+          title: 'Refleksi sore & jalan santai',
+          body: 'Meluangkan waktu 15 menit untuk menikmati udara luar, bernapas dalam-dalam, dan bersyukur atas pencapaian kecil.',
+          date: 'Kemarin, 17:15'
+        }
+      ];
+
+      let journalEntries = JSON.parse(localStorage.getItem('prodhub_journals')) || defaultJournals;
+      let selectedMood = '😊 Produktif';
+
+      const journalEntryForm = document.getElementById('journalEntryForm');
+      const journalInputTitle = document.getElementById('journalInputTitle');
+      const journalInputBody = document.getElementById('journalInputBody');
+      const moodSelector = document.getElementById('moodSelector');
+      const journalListContainer = document.getElementById('journalListContainer');
+      const journalCountBadge = document.getElementById('journalCountBadge');
+      const promptChips = document.querySelectorAll('.prompt-chip');
+
+      function saveJournals() {
+        localStorage.setItem('prodhub_journals', JSON.stringify(journalEntries));
+        renderJournals();
+      }
+
+      moodSelector.addEventListener('click', (e) => {
+        const pill = e.target.closest('.mood-pill');
+        if (!pill) return;
+        moodSelector.querySelectorAll('.mood-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        selectedMood = pill.getAttribute('data-mood');
+        playChime('click');
+      });
+
+      promptChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const prompt = chip.getAttribute('data-prompt');
+          journalInputBody.value = prompt;
+          journalInputBody.focus();
+          playChime('click');
+        });
+      });
+
+      journalEntryForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = journalInputTitle.value.trim();
+        const body = journalInputBody.value.trim();
+        if (!title || !body) return;
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+        const newEntry = {
+          id: Date.now().toString(),
+          mood: selectedMood,
+          title: title,
+          body: body,
+          date: `${dateStr}, ${timeStr}`
+        };
+
+        journalEntries.unshift(newEntry);
+        journalInputTitle.value = '';
+        journalInputBody.value = '';
+        saveJournals();
+        showToast('Catatan tersimpan!', '📖');
+        playChime('complete');
+      });
+
+      function renderJournals() {
+        journalCountBadge.textContent = `${journalEntries.length} Catatan`;
+
+        if (journalEntries.length === 0) {
+          journalListContainer.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="empty-title">Belum ada catatan jurnal</div>
+              <div class="empty-subtitle">Catat rasa syukur dan refleksi harianmu untuk menjaga kesehatan pikiran.</div>
+            </div>
+          `;
+          return;
+        }
+
+        journalListContainer.innerHTML = journalEntries.map(entry => {
+          return `
+            <article class="journal-item-card" data-id="${entry.id}">
+              <div class="journal-item-header">
+                <span class="journal-item-mood">${escapeHtml(entry.mood)}</span>
+                <span class="journal-item-date">${escapeHtml(entry.date)}</span>
+              </div>
+              <h3 class="journal-item-title">${escapeHtml(entry.title)}</h3>
+              <p class="journal-item-body">${escapeHtml(entry.body)}</p>
+              <div class="journal-item-actions">
+                <button class="btn-del-journal" onclick="window.deleteJournal('${entry.id}')" title="Hapus Catatan">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                  </svg>
+                  Hapus
+                </button>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      window.deleteJournal = function(id) {
+        journalEntries = journalEntries.filter(j => j.id !== id);
+        saveJournals();
+        showToast('Catatan jurnal dihapus', '🗑️');
+      };
+
+      renderJournals();
+
+      /* ----------------------------------------------------------------------
+         11. UTILITAS: ESCAPE HTML
+         ---------------------------------------------------------------------- */
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+    })();
+  </script>
+</body>
+</html>
