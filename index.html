@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0f766e">
   <title>Productivity Hub - Aplikasi Produktivitas Mobile</title>
+
+  <!-- PWA Configuration -->
+  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22Productivity%20Hub%22%2C%22short_name%22%3A%22ProdHub%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%230f766e%22%7D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ProductivityHub">
   
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1014,6 +1020,64 @@
       color: #1e293b;
       font-variant-numeric: tabular-nums;
       line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 2px dashed transparent;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-clock:hover {
+      border-color: var(--primary);
+      background: rgba(163, 170, 90, 0.12);
+      transform: scale(1.02);
+    }
+
+    .timer-clock-input {
+      font-family: inherit;
+      font-size: 2.45rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--primary-darker);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      text-align: center;
+      width: 145px;
+      height: 48px;
+      background: #ffffff;
+      border: 2.5px solid var(--primary);
+      border-radius: 12px;
+      padding: 0 4px;
+      outline: none;
+      box-shadow: 0 4px 14px rgba(163, 170, 90, 0.35);
+      animation: tabFadeIn 0.15s ease-out;
+    }
+
+    .timer-type-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--primary-darker);
+      background: #f1f5e9;
+      border: 1px dashed var(--primary);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      margin-top: 5px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      user-select: none;
+    }
+
+    .timer-type-hint:hover {
+      background: var(--primary-soft);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
     .timer-session-label {
@@ -1023,7 +1087,7 @@
       background: var(--primary-soft);
       padding: 3px 10px;
       border-radius: var(--radius-full);
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     /* Timer Controls */
@@ -1123,7 +1187,14 @@
       font-size: 0.88rem;
       font-weight: 800;
       color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .custom-timer-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
       margin-bottom: 12px;
+      line-height: 1.3;
     }
 
     .custom-stepper-row {
@@ -1161,11 +1232,12 @@
     }
 
     .custom-input-box input {
-      width: 60px;
+      width: 78px;
       border: none;
       text-align: center;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 800;
+      font-family: inherit;
       color: var(--text-main);
       outline: none;
     }
@@ -1890,7 +1962,21 @@
               <circle class="timer-progress-circle" id="timerProgressRing" cx="100" cy="100" r="90" />
             </svg>
             <div class="timer-inner-content">
-              <div class="timer-clock" id="timerClockDisplay">25:00</div>
+              <div class="timer-clock" id="timerClockDisplay" title="Klik untuk ketik waktu secara langsung">25:00</div>
+              <input 
+                type="text" 
+                id="timerClockInput" 
+                class="timer-clock-input" 
+                style="display: none;" 
+                placeholder="25:00" 
+                maxlength="8" 
+                autocomplete="off" 
+                aria-label="Ketik waktu timer (contoh: 25 atau 25:00)"
+              >
+              <div class="timer-type-hint" id="timerTypeHint" title="Klik untuk ketik waktu secara langsung">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>Ketik Waktu</span>
+              </div>
               <div class="timer-session-label" id="timerSessionStatus">Sesi Fokus</div>
             </div>
           </div>
@@ -1936,16 +2022,17 @@
           <!-- Panel Kustom Waktu (Interaktif) -->
           <div class="custom-timer-panel" id="customTimerPanel" style="display: none;">
             <div class="custom-timer-title">⏱️ Tentukan Waktu Kustom</div>
+            <div class="custom-timer-subtitle">Ketik durasi lalu tekan Enter atau klik Terapkan</div>
             
             <div class="custom-stepper-row">
-              <button type="button" class="btn-step" id="btnStepMinus5">-5</button>
-              <button type="button" class="btn-step" id="btnStepMinus1">-1</button>
+              <button type="button" class="btn-step" id="btnStepMinus5" title="Kurangi 5 menit">-5</button>
+              <button type="button" class="btn-step" id="btnStepMinus1" title="Kurangi 1 menit">-1</button>
               <div class="custom-input-box">
-                <input type="number" id="customMinutesInput" min="1" max="180" value="30">
+                <input type="text" id="customMinutesInput" inputmode="numeric" value="30" placeholder="30" autocomplete="off" title="Ketik angka menit atau format MM:SS">
                 <span>menit</span>
               </div>
-              <button type="button" class="btn-step" id="btnStepPlus1">+1</button>
-              <button type="button" class="btn-step" id="btnStepPlus5">+5</button>
+              <button type="button" class="btn-step" id="btnStepPlus1" title="Tambah 1 menit">+1</button>
+              <button type="button" class="btn-step" id="btnStepPlus5" title="Tambah 5 menit">+5</button>
             </div>
 
             <!-- Quick Pill Presets -->
@@ -2360,7 +2447,16 @@
         const text = taskInputText.value.trim();
         if (!text) return;
 
-        const customTime = taskInputTime.value || '';
+        let customTime = taskInputTime.value || '';
+        // Deteksi jika user mengetik waktu di dalam teks tugas (contoh: "Meeting 14:00" atau "Olahraga jam 07:30")
+        if (!customTime) {
+          const timeMatch = text.match(/\b(?:jam\s+)?([01]?[0-9]|2[0-3])[:.]([0-5][0-9])\b/i);
+          if (timeMatch) {
+            const hh = String(timeMatch[1]).padStart(2, '0');
+            const mm = String(timeMatch[2]).padStart(2, '0');
+            customTime = `${hh}:${mm}`;
+          }
+        }
 
         const newTask = {
           id: Date.now().toString(),
@@ -2688,6 +2784,8 @@
       };
 
       const timerClockDisplay = document.getElementById('timerClockDisplay');
+      const timerClockInput = document.getElementById('timerClockInput');
+      const timerTypeHint = document.getElementById('timerTypeHint');
       const timerSessionStatus = document.getElementById('timerSessionStatus');
       const timerProgressRing = document.getElementById('timerProgressRing');
       const btnToggleTimer = document.getElementById('btnToggleTimer');
@@ -2854,12 +2952,153 @@
         });
       });
 
-      // Fitur Kustom Waktu Interaktif
+      // Helper untuk parsing teks waktu yang diketik (misal: "25", "25:00", "05:30", "1h 30m", "45m", "30s")
+      function parseTimeToSeconds(inputStr) {
+        if (!inputStr) return null;
+        const str = String(inputStr).trim().toLowerCase();
+        if (!str) return null;
+
+        // Cek unit waktu spesifik (jam, menit, detik)
+        let hasUnit = false;
+        let totalSec = 0;
+        const hourMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:h|jam|hr|hours?)/);
+        if (hourMatch) {
+          hasUnit = true;
+          totalSec += Math.round(parseFloat(hourMatch[1]) * 3600);
+        }
+        const minMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:m|mnt|min|menit|minutes?)/);
+        if (minMatch) {
+          hasUnit = true;
+          totalSec += Math.round(parseFloat(minMatch[1]) * 60);
+        }
+        const secMatch = str.match(/(\d+(?:\.\d+)?)\s*(?:s|dtk|sec|detik|seconds?)/);
+        if (secMatch) {
+          hasUnit = true;
+          totalSec += Math.round(parseFloat(secMatch[1]));
+        }
+        if (hasUnit && totalSec > 0) return totalSec;
+
+        // Format waktu dengan titik dua MM:SS atau HH:MM:SS
+        if (str.includes(':')) {
+          const parts = str.split(':').map(p => parseFloat(p.trim()));
+          if (parts.some(isNaN)) return null;
+          if (parts.length === 2) {
+            return Math.round(parts[0] * 60 + parts[1]);
+          } else if (parts.length === 3) {
+            return Math.round(parts[0] * 3600 + parts[1] * 60 + parts[2]);
+          }
+          return null;
+        }
+
+        // Angka murni: default adalah menit
+        const num = parseFloat(str);
+        if (!isNaN(num) && num > 0) {
+          return Math.round(num * 60);
+        }
+        return null;
+      }
+
+      function setTimerCustomSeconds(totalSeconds, labelText) {
+        currentTimerMode = 'custom';
+        timerDuration = totalSeconds;
+        timerRemaining = totalSeconds;
+
+        modeButtons.forEach(btn => btn.classList.remove('active'));
+
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        if (labelText) {
+          timerSessionStatus.textContent = labelText;
+        } else if (secs > 0) {
+          timerSessionStatus.textContent = `Kustom (${mins}m ${secs}s)`;
+        } else {
+          timerSessionStatus.textContent = `Kustom (${mins}m)`;
+        }
+
+        pauseTimer();
+        updateTimerDisplay();
+      }
+
+      // 1. Ketik Waktu Langsung di Tampilan Jam Timer
+      let isEditingClock = false;
+
+      function openClockTyping() {
+        if (isEditingClock) return;
+        isEditingClock = true;
+        if (timerRunning) {
+          pauseTimer();
+        }
+        timerClockDisplay.style.display = 'none';
+        if (timerTypeHint) timerTypeHint.style.display = 'none';
+        timerClockInput.style.display = 'inline-block';
+
+        const minutes = Math.floor(timerRemaining / 60);
+        const seconds = timerRemaining % 60;
+        timerClockInput.value = seconds > 0
+          ? `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+          : `${minutes}`;
+
+        timerClockInput.focus();
+        timerClockInput.select();
+        playChime('click');
+      }
+
+      function closeClockTyping(applyChanges = true) {
+        if (!isEditingClock) return;
+
+        if (applyChanges) {
+          const val = timerClockInput.value.trim();
+          if (val) {
+            const totalSec = parseTimeToSeconds(val);
+            if (totalSec !== null && totalSec >= 5 && totalSec <= 14400) {
+              setTimerCustomSeconds(totalSec);
+              showToast(`Waktu diatur ke ${timerClockDisplay.textContent}!`, '⏱️');
+              playChime('complete');
+            } else if (totalSec !== null) {
+              showToast('Durasi minimal 5 detik, maksimal 240 menit', '⚠️');
+            } else {
+              showToast('Format waktu tidak valid (contoh: 25 atau 15:30)', '⚠️');
+            }
+          }
+        }
+
+        isEditingClock = false;
+        timerClockInput.style.display = 'none';
+        timerClockDisplay.style.display = '';
+        if (timerTypeHint) timerTypeHint.style.display = '';
+      }
+
+      timerClockDisplay.addEventListener('click', openClockTyping);
+      if (timerTypeHint) timerTypeHint.addEventListener('click', openClockTyping);
+
+      timerClockInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          closeClockTyping(true);
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeClockTyping(false);
+        }
+      });
+
+      timerClockInput.addEventListener('blur', () => {
+        setTimeout(() => {
+          if (isEditingClock) {
+            closeClockTyping(true);
+          }
+        }, 120);
+      });
+
+      // 2. Fitur Kustom Waktu Interaktif (Drawer / Panel)
       btnOpenCustomTimer.addEventListener('click', () => {
         const isHidden = customTimerPanel.style.display === 'none';
         customTimerPanel.style.display = isHidden ? 'block' : 'none';
         if (isHidden) {
           customMinutesInput.value = Math.max(1, Math.round(timerDuration / 60));
+          setTimeout(() => {
+            customMinutesInput.focus();
+            customMinutesInput.select();
+          }, 60);
         }
         playChime('click');
       });
@@ -2869,29 +3108,29 @@
         playChime('click');
       });
 
-      btnStepMinus5.addEventListener('click', () => {
-        let val = parseInt(customMinutesInput.value, 10) || 25;
-        customMinutesInput.value = Math.max(1, val - 5);
-        playChime('click');
+      customMinutesInput.addEventListener('focus', () => {
+        customMinutesInput.select();
       });
 
-      btnStepMinus1.addEventListener('click', () => {
-        let val = parseInt(customMinutesInput.value, 10) || 25;
-        customMinutesInput.value = Math.max(1, val - 1);
-        playChime('click');
+      customMinutesInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btnApplyCustomTimer.click();
+        }
       });
 
-      btnStepPlus1.addEventListener('click', () => {
-        let val = parseInt(customMinutesInput.value, 10) || 25;
-        customMinutesInput.value = Math.min(180, val + 1);
+      function stepCustomInput(delta) {
+        let currentSec = parseTimeToSeconds(customMinutesInput.value) || 25 * 60;
+        let currentMin = Math.round(currentSec / 60);
+        let newMin = Math.max(1, Math.min(240, currentMin + delta));
+        customMinutesInput.value = newMin;
         playChime('click');
-      });
+      }
 
-      btnStepPlus5.addEventListener('click', () => {
-        let val = parseInt(customMinutesInput.value, 10) || 25;
-        customMinutesInput.value = Math.min(180, val + 5);
-        playChime('click');
-      });
+      btnStepMinus5.addEventListener('click', () => stepCustomInput(-5));
+      btnStepMinus1.addEventListener('click', () => stepCustomInput(-1));
+      btnStepPlus1.addEventListener('click', () => stepCustomInput(1));
+      btnStepPlus5.addEventListener('click', () => stepCustomInput(5));
 
       quickPills.forEach(pill => {
         pill.addEventListener('click', () => {
@@ -2901,15 +3140,17 @@
       });
 
       btnApplyCustomTimer.addEventListener('click', () => {
-        const minVal = parseInt(customMinutesInput.value, 10);
-        if (isNaN(minVal) || minVal < 1 || minVal > 180) {
-          showToast('Masukkan durasi antara 1 - 180 menit', '⚠️');
+        const val = customMinutesInput.value.trim();
+        const totalSec = parseTimeToSeconds(val);
+
+        if (totalSec === null || totalSec < 5 || totalSec > 14400) {
+          showToast('Masukkan durasi valid (5 dtk - 240 mnt, contoh: 30 atau 25:00)', '⚠️');
           return;
         }
 
-        setTimerMode('custom', minVal);
+        setTimerCustomSeconds(totalSec);
         customTimerPanel.style.display = 'none';
-        showToast(`Waktu kustom ${minVal} menit diterapkan!`, '⏱️');
+        showToast(`Waktu kustom ${timerClockDisplay.textContent} diterapkan!`, '⏱️');
         playChime('complete');
       });
 
